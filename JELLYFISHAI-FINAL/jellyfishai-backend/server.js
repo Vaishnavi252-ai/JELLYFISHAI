@@ -20,8 +20,8 @@ const app = express();
 
 const allowedOrigins = [
   'http://localhost:5173',
-  process.env.FRONTEND_URL, // set in Vercel env
-  'https://jellyfishai-d81cidjyn-vaishnavi252-ais-projects.vercel.app'
+  'https://jellyfishai-ten.vercel.app',
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 app.use(cors({
