@@ -74,8 +74,10 @@ app.use((req, res) => {
 
 app.use((err, req, res, next) => {
   console.error('❌ Error:', err);
+
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
+
   res.status(statusCode).json({
     error: true,
     statusCode,
@@ -84,24 +86,28 @@ app.use((err, req, res, next) => {
   });
 });
 
-const PORT = process.env.PORT || 5000;
+// Only start the server when NOT running on Vercel
+if (!process.env.VERCEL) {
+  const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  console.log('\n================================');
-  console.log('🚀 JellyfishAI Backend Server');
-  console.log('================================');
-  console.log(`✅ Server running on port ${PORT}`);
-  console.log(`📍 URL: http://localhost:${PORT}`);
-  console.log(`🔗 Frontend: ${process.env.FRONTEND_URL}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
-  console.log(`🤖 AI Routes: /api/ai/generate, /api/ai/correct, /api/ai/battle`);
-  console.log('================================\n');
-});
+  app.listen(PORT, () => {
+    console.log('\n================================');
+    console.log('🚀 JellyfishAI Backend Server');
+    console.log('================================');
+    console.log(`✅ Server running on port ${PORT}`);
+    console.log(`📍 URL: http://localhost:${PORT}`);
+    console.log(`🔗 Frontend: ${process.env.FRONTEND_URL}`);
+    console.log(`🌍 Environment: ${process.env.NODE_ENV}`);
+    console.log(`🤖 AI Routes: /api/ai/generate, /api/ai/correct, /api/ai/battle`);
+    console.log('================================\n');
+  });
 
-process.on('SIGINT', async () => {
-  console.log('\n⏸️  Shutting down gracefully...');
-  await mongoose.connection.close();
-  process.exit(0);
-});
+  process.on('SIGINT', async () => {
+    console.log('\n⏸️ Shutting down gracefully...');
+    await mongoose.connection.close();
+    process.exit(0);
+  });
+}
 
+// Export Express app for Vercel
 export default app;
