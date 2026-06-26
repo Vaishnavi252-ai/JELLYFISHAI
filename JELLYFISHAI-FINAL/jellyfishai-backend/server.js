@@ -14,12 +14,33 @@ import aiRoutes from './routes/ai.routes.js';
 
 const app = express();
 
+/* =========================
+   FIXED CORS CONFIG (UPDATED)
+========================= */
+
+const allowedOrigins = [
+  'http://localhost:5173',
+  process.env.FRONTEND_URL, // set in Vercel env
+  'https://jellyfishai-d81cidjyn-vaishnavi252-ais-projects.vercel.app'
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // allow requests with no origin (like Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS: ' + origin));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+/* ========================= */
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
